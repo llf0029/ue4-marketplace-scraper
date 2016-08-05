@@ -26,7 +26,7 @@ bs = BeautifulSoup(html.read(), "html.parser")
 
 
 def find_text_content_by_class(bs, tag, class_name):
-	"""Generates a list of non-tag text content from an HTML doc"""
+    """Generates a list of non-tag text content from an HTML doc"""
 	result = []
 	for item in bs.find_all(tag, {"class":class_name}):
 		item_text = strip_tags(str(item))
@@ -72,7 +72,6 @@ print (len(prices))
 print (len(images))
 print (len(asset_urls))
 print (images)
-
 
 
 
