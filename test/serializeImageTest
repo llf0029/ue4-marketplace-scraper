@@ -1,0 +1,47 @@
+#--------------------------------#
+# Testing image downloading      #
+#--------------------------------#
+
+from urllib.request import urlopen
+from PIL import Image
+
+
+def get_image(url):
+    return urlopen(url)
+
+
+dl_url = 'https://cdn1.epicgames.com/ue/item/Store_ForestCollection_Thumb-284x284-8c45a54fc00148e5fd677b0335cd0646.png'
+image = Image.open(get_image(dl_url))
+
+serializable_image = {
+    'pixels' : image.tobytes(),
+    'size' : image.size,
+    'mode' : image.mode
+}
+
+
+#--------------------------------#
+# Testing image serialization    #
+#--------------------------------#
+
+import shelve
+
+# ADD TO SHELF
+with shelve.open('data/shelved-image', 'c') as shelf:
+    shelf['image'] = serializable_image
+
+# READ FROM SHELF
+with shelve.open('data/shelved-image', 'r') as shelf:
+    img = shelf['image']
+    loaded_image = Image.frombytes(img['mode'], img['size'], img['pixels'])
+
+
+#--------------------------------#
+# Save and display img locally   #
+#--------------------------------#
+
+from webbrowser import open
+from os.path import realpath
+
+loaded_image.save('data/testdesu.png')
+open('file://' + realpath('data/testdesu.png'))
