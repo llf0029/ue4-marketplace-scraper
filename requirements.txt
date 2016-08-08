@@ -6,7 +6,7 @@
 # Run the following command to install all required     #
 # dependences.                                          #
 #                                                       #
-#           pip install -r requirements.txt             #
+#            pip install -r requirements.txt            #
 #                                                       #
 #-------------------------------------------------------#
 
