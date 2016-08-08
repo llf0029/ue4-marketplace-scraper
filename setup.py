@@ -1,7 +1,9 @@
-def setup():
-    pip install beautifulsoup4      # Used by webpage.py
-    pip install reportlab           # Used in 'pretty' output
-    
+from distutils.core import setup
 
-if __name__ == '__main__':
-    setup()
+setup(
+	name='ue4mps',
+    version='0.0000001a',
+    description='Unreal Engine 4 Marketplace Scraper',
+    author='Lyndon Forsythe',
+    install_requires=['bs4', 'reportlab'],
+)
