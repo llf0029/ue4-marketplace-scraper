@@ -135,11 +135,11 @@ class UMController(controller.Controller):
 
 
 if __name__ == '__main__':
-    import cmd_view
+    import um_view
     import data_util
     import analysis_util
     
-    v = cmd_view.CmdView()
+    v = um_view.UMView()
     d = data_util.DataUtil()
     a = analysis_util.AnalysisUtil()
     c = UMController(v, d, a)
