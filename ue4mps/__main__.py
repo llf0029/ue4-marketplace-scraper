@@ -10,7 +10,7 @@ import analysis_util
 
 
 def main(args):
-    v = um_view.UmView()
+    v = um_view.UMView()
     d = data_util.DataUtil()
     a = analysis_util.AnalysisUtil()
     c = um_controller.UMController(v, d, a)
@@ -34,7 +34,7 @@ def main(args):
             else:
                 print ('ELSE>>>>>>')
     else:
-        cmd = um_cmd.UmCmd(c)
+        cmd = um_cmd.UMCmd(c)
         cmd.start()
 
     
