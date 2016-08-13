@@ -2,7 +2,6 @@
 import controller
 import view
 import webpage
-import data_util
 
 import html
 
@@ -31,9 +30,10 @@ class UMController(controller.Controller):
     temp_result = None
 
 
-    def __init__(self, view, data_util):
+    def __init__(self, view, data_util, analysis_util):
         self.view = view
         self.data_util = data_util
+        self.analysis_util = analysis_util
 
 
     def search(self, args):
@@ -76,8 +76,9 @@ class UMController(controller.Controller):
             if self.temp_result is not None:
                 i = int(asset_index) - 1
                 if i >= 0:
-                    image = self.temp_result['images'][int(asset_index) - 1]
-                    self.view.display_image(html.unescape(image))
+                    url = self.temp_result['images'][int(asset_index) - 1]
+                    img = self.data_util.download_image(html.unescape(url))
+                    self.view.display_image(img)
                 else:
                     raise ValueError
             else:
@@ -87,6 +88,20 @@ class UMController(controller.Controller):
                 + 'VIEW_ASSET_IMAGE 4')
         except IndexError:
             self.view.error('Value must be within the previous search results')
+
+
+    def analyse_results(self):
+        """Displays the last query's results in a chart"""
+        if self.temp_result is not None:
+            img = self.analysis_util.generate_chart(
+                self.temp_result['prices'], 
+                self.temp_result['assets'], 
+                'Price (USD)', 
+                '$%.2f'
+            )
+            self.view.display_image(img)
+        else:
+            self.view.error('You must run a query first')
 
 
     def save_last_query(self):
@@ -121,7 +136,11 @@ class UMController(controller.Controller):
 
 if __name__ == '__main__':
     import cmd_view
+    import data_util
+    import analysis_util
+    
     v = cmd_view.CmdView()
     d = data_util.DataUtil()
-    c = UMController(v, d)
+    a = analysis_util.AnalysisUtil()
+    c = UMController(v, d, a)
     c.search('fire')

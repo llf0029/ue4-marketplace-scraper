@@ -33,11 +33,19 @@ class WebPage(object):
         """Generates a list of currency values matching the tag & class"""
         result = []
         for item in self.find_text(tag, class_name):
+            # Use 0.00 if free
+            f = 0.00
+
+            # If price is discounted (looks like '$10.00 $5.00')
             if item == "Free":
-                result.append(0.00)
+                pass
+            elif item.count('$') == 2:
+                # Get last index of '$' +1 onwards
+                f = float(item[(item.rindex('$') + 1):])
             else:
                 f = float(item[1:])
-                result.append(f)
+
+            result.append(f)
         return result
 
 
