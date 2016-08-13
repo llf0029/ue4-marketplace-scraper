@@ -2,7 +2,7 @@
 import cmd
 
 # Class definition
-class UmCmd(cmd.Cmd):
+class UMCmd(cmd.Cmd):
     intro = 'Welcome to the Unreal Engine 4 Marketplace scraper app.\n' + \
             'Type help or ? to list commands.\n'
     prompt = 'UE4 Marketplace>'
@@ -77,9 +77,9 @@ if __name__ == '__main__':
     import data_util
     import analysis_util
 
-    v = um_view.UmView()
+    v = um_view.UMView()
     d = data_util.DataUtil()
     a = analysis_util.AnalysisUtil()
     c = um_controller.UMController(v, d, a)
-    console = UmCmd(c)
+    console = UMCmd(c)
     console.start()
