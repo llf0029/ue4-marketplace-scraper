@@ -6,7 +6,7 @@ from webbrowser import open
 
 
 # Class definition
-class UmView(view.View):
+class UMView(view.View):
 
 
     def display(self, message):
