@@ -1,8 +1,11 @@
 # Imports
 import view
+
+import os
 from PIL import Image
 from urllib.request import urlretrieve
 from webbrowser import open
+
 
 
 # Class definition
@@ -38,7 +41,10 @@ class UMView(view.View):
 
     def display_image(self, file_path):
         """Displays a file saved on the local machine"""
-        open('file://' + file_path)
+        if os.path.exists(file_path):
+            open('file://' + file_path)
+        else:
+            self.error('The image at "{}" was not found'.format(file_path))
 
 
 # END OF CLASS

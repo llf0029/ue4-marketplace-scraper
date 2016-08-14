@@ -51,10 +51,21 @@ class UMCmd(cmd.Cmd):
         """Reload a previously stored query"""
         self.controller.load_stored_query()
 
+    def do_wishlist_add(self, arg):
+        """Adds an item from the previous query to the wishlist"""
+        self.controller.wishlist_add(arg)
+
+    def do_wishlist_view(self, arg):
+        """Displays all items in the wishlist"""
+        self.controller.wishlist_view()
+
 
     # -------- Misc Commands --------
     def do_exit(self, arg):
         """Exit the Unreal Engine 4 Marketplace scraper app"""
+        print ('Cleaning tmp folder...')
+        self.controller.clear_tmp_folder()
+
         print ('Shutting down...')
         return True
 
@@ -68,6 +79,7 @@ class UMCmd(cmd.Cmd):
             print ('  - {}'.format(cat))
 
 
+# END OF CLASS
 
 
 

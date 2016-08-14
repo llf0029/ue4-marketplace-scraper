@@ -13,6 +13,14 @@ class Controller(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def display_asset_image(self, args):
+        pass
+
+    @abstractmethod
+    def analyse_results(self, args):
+        pass
+
+    @abstractmethod
     def set_num_of_results(self, args):
         pass
 
@@ -22,4 +30,12 @@ class Controller(metaclass=ABCMeta):
 
     @abstractmethod
     def load_stored_query(self):
+        pass
+
+    @abstractmethod
+    def wishlist_add(self, args):
+        pass
+
+    @abstractmethod
+    def wishlist_view(self, args):
         pass

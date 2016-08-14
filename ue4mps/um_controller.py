@@ -23,6 +23,9 @@ class UMController(controller.Controller):
     TAGS_IMGS   = ['div','image-box']
     TAGS_URLS   = ['div','image-box']
 
+    STORED_QUERY = 'stored-query'
+    WISHLIST = 'wishlist'
+
     # Settings
     num_of_results = 10
 
@@ -107,7 +110,7 @@ class UMController(controller.Controller):
     def save_last_query(self):
         """Saves the last query for later use"""
         if self.temp_result is not None:
-            self.data_util.save_shelf(self.temp_result)
+            self.data_util.save_shelf(self.STORED_QUERY, self.temp_result)
         else:
             self.view.error('No results to save')
 
@@ -115,7 +118,7 @@ class UMController(controller.Controller):
     def load_stored_query(self):
         """Loads the stored query if it exists"""
         try:
-            self.temp_result = self.data_util.load_shelf()
+            self.temp_result = self.data_util.load_shelf(self.STORED_QUERY)
             self.view.display_items_formatted(
                 self.temp_result, 
                 len(self.temp_result['assets'])
@@ -131,11 +134,53 @@ class UMController(controller.Controller):
             self.view.error('The value must be a whole number:  RESULTS 10')
 
 
+    def wishlist_add(self, asset_index):
+        try:
+            if self.temp_result is not None:
+                i = int(asset_index) - 1
+                if i >= 0:
+                    url = self.temp_result['images'][i]
+                    img = self.data_util.download_pil_image(html.unescape(url))
+                    serialized_img = self.data_util.serialize_image(img)
+
+                    wishlist = self.data_util.load_shelf(self.WISHLIST)
+                    wishlist['assets'].append(self.temp_result['assets'][i])
+                    wishlist['prices'].append(self.temp_result['prices'][i])
+                    wishlist['images'].append(serialized_img)
+                    wishlist['urls'].append(self.temp_result['urls'][i])
+                    self.data_util.save_shelf(self.WISHLIST, wishlist)
+                else:
+                    raise ValueError
+            else:
+                self.view.error('You must run a query first')
+        except ValueError:
+            self.view.error('The value must be a whole number: ' \
+                + 'WISHLIST_ADD 4')
+        except IndexError:
+            self.view.error('Value must be within the previous search results')
+
+
+    def wishlist_view(self):
+        try:
+            wishlist = self.data_util.load_shelf(self.WISHLIST)
+            self.view.display_items_formatted(wishlist, len(wishlist['assets']))
+            for i in range(len(wishlist['images'])):
+                img = self.data_util.deserialize_image(wishlist['images'][i])
+                self.view.display_image(img)
+        except:
+            self.view.error('No saved data to load')
+
+
+    def clear_tmp_folder(self):
+        self.data_util.clear_tmp_folder()
+
+
+
 # END OF CLASS
 
 
 if __name__ == '__main__':
-    import um_view
+    import cmd_view
     import data_util
     import analysis_util
     

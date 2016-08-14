@@ -21,29 +21,33 @@ class AnalysisUtil(object):
     MARGIN = 64
 
 
-    def generate_chart(self, data, x_labels, y_label, y_format):
+    def generate_chart(self, data, x_labels, y_label, d_format):
         """Generates and saves a chart to disk, returning its local path"""
         # Create drawing to hold chart and legend (width, height)
         d = Drawing(self.W, self.H)
 
         # Create chart and legend
         cols = self.create_colors(len(data))
-        c = self.create_chart(data, y_label, y_format, cols)
+        c = self.create_chart(data, y_label, d_format, cols)
         l = self.create_legend(x_labels, cols)
 
         # Add chart and legend to drawing
         d.add(c)
         d.add(l)
 
-        # Export image as png
-        path = os.path.join(self.TEMP_PATH, 'image.png')
-        d.save(fnRoot=path, formats=['png'])
+        # Get/Create full file path
+        full_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+                                self.TEMP_PATH)
+        if not os.path.exists(full_dir):
+            os.makedirs(full_dir)
 
-        # Return full file path
-        return os.path.join(os.path.dirname(__file__), path)
+        # Export image as png and return save path
+        save_path = os.path.join(full_dir, 'image.png')
+        d.save(fnRoot=save_path, formats=['png'])
+        return save_path
 
 
-    def create_chart(self, data, y_label, y_format, cols):
+    def create_chart(self, data, y_label, d_format, cols):
         """Generates and returns a bar chart object"""
         chart = VerticalBarChart()                  # Create a bar chart
         chart.width = self.W - (self.MARGIN * 2)    # Set chart width
@@ -64,7 +68,7 @@ class AnalysisUtil(object):
 
         # Add labels to chart
         chart.categoryAxis.categoryNames = [y_label]
-        chart.barLabelFormat = y_format # Format of text to display on labels
+        chart.barLabelFormat = d_format # Format of text to display on labels
         chart.barLabels.nudge = 8       # Nudge labels upwards by 8px
 
         return chart
