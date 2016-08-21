@@ -5,7 +5,6 @@ import webpage
 
 import html
 
-from urllib.request import urlopen
 from urllib.parse import quote
 from urllib.error import HTTPError
 
@@ -16,18 +15,20 @@ class UMController(controller.Controller):
     # Constants
     BASE_URL   = 'https://www.unrealengine.com'
     SEARCH_URL = '{}/marketplace/assets?lang=&q={}'
+    SEARCH_EXT = '{}&offset={}&max=25'
     CAT_URL    = '{}/marketplace/content-cat/assets/{}'
 
     TAGS_ASSETS = ['a', 'mock-ellipsis-item mock-ellipsis-item-helper']
     TAGS_PRICES = ['span', 'asset-price']
     TAGS_IMGS   = ['div','image-box']
     TAGS_URLS   = ['div','image-box']
+    TAGS_NEXTPAGE = ['a', 'nextLink']
 
     STORED_QUERY = 'stored-query'
     WISHLIST = 'wishlist'
 
     # Settings
-    num_of_results = 10
+    search_results = 10
 
     # Temp data
     temp_result = None
@@ -43,34 +44,79 @@ class UMController(controller.Controller):
         """Gets the assets from a search query"""
         full_url = self.SEARCH_URL.format(self.BASE_URL, quote(args))
         try:
-            results = self.generate_results(full_url)
-            self.view.display_items_formatted(results, self.num_of_results)
+            results = self.generate_results(full_url, self.search_results)
+            self.view.display_items_formatted(results, self.search_results)
             self.temp_result = results   # Store results in case of save cmd
-        except HTTPError:
-            self.view.error('The search query failed')
+        except HTTPError as err:
+            self.view.error('The search query failed: ' + err.reason)
+        except:
+            self.view.error('An error occured while contacting the server. \
+                Please check your internet connection and try again.')
 
 
     def category(self, args):
         """Gets the assets on a category page"""
         full_url = self.CAT_URL.format(self.BASE_URL, quote(args))
         try:
-            results = self.generate_results(full_url)
-            self.view.display_items_formatted(results, self.num_of_results)
+            results = self.generate_results(full_url, 25)
+            self.view.display_items_formatted(results, 25)
             self.temp_result = results   # Store results in case of save cmd
         except HTTPError:
             self.view.error('The category "{}" was not found'.format(args))
+        except:
+            self.view.error('An error occured while contacting the server. \
+                Please check your internet connection and try again.')
 
 
-    def generate_results(self, url):
+    def generate_results(self, url, num_of_results):
         """Downloads a page and strips the results into components"""
-        page = webpage.WebPage(url, self.num_of_results, self.BASE_URL)
-        results = {
-            'assets':page.find_text (self.TAGS_ASSETS[0], self.TAGS_ASSETS[1]),
-            'prices':page.find_price(self.TAGS_PRICES[0], self.TAGS_PRICES[1]),
-            'images':page.find_imgs (self.TAGS_IMGS[0], self.TAGS_IMGS[1]),
-            'urls'  :page.find_links(self.TAGS_URLS[0], self.TAGS_URLS[1])
+        assets = []
+        prices = []
+        images = []
+        urls = []
+        
+        # Use original url for first time
+        next_page_url = url
+        
+        # Loop until got enough results, or we run out of results
+        while True:
+            # Get next page object
+            page = webpage.WebPage(next_page_url, self.BASE_URL)
+
+            # Generate and append results
+            assets += page.find_text (self.TAGS_ASSETS[0], self.TAGS_ASSETS[1])
+            prices += page.find_price(self.TAGS_PRICES[0], self.TAGS_PRICES[1])
+            images += page.find_imgs (self.TAGS_IMGS[0],   self.TAGS_IMGS[1])
+            urls   += page.find_links(self.TAGS_URLS[0],   self.TAGS_URLS[1])
+
+            # Check for results maxed out
+            if len(assets) >= num_of_results:
+                assets = assets[:num_of_results]
+                prices = prices[:num_of_results]
+                images = images[:num_of_results]
+                urls   = urls[:num_of_results]
+                break;
+
+            # Check for more pages
+            try:
+                next_page_url = page.find_links(
+                    self.TAGS_NEXTPAGE[0],
+                    self.TAGS_NEXTPAGE[1]
+                )
+                next_page_url = str(next_page_url[0])
+            except:
+                next_page_url = None
+            finally:
+                if next_page_url is None:
+                    break
+
+        # Lastly, return results object
+        return {
+            'assets': assets,
+            'prices': prices,
+            'images': images,
+            'urls': urls
         }
-        return results
 
 
     def display_asset_image(self, asset_index):
@@ -127,9 +173,9 @@ class UMController(controller.Controller):
             self.view.error('No saved data to load')
 
 
-    def set_num_of_results(self, new_value):
+    def set_search_results(self, new_value):
         try:
-            self.num_of_results = int(new_value)
+            self.search_results = int(new_value)
         except ValueError:
             self.view.error('The value must be a whole number:  RESULTS 10')
 
@@ -165,10 +211,17 @@ class UMController(controller.Controller):
             wishlist = self.data_util.load_shelf(self.WISHLIST)
             self.view.display_items_formatted(wishlist, len(wishlist['assets']))
             for i in range(len(wishlist['images'])):
-                img = self.data_util.deserialize_image(wishlist['images'][i])
+                img = self.data_util.deserialize_image(
+                    wishlist['images'][i],
+                    wishlist['assets'][i]
+                )
                 self.view.display_image(img)
         except:
             self.view.error('No saved data to load')
+
+
+    def wishlist_clear(self):
+        self.data_util.reset_shelf(self.WISHLIST)
 
 
     def clear_tmp_folder(self):

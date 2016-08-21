@@ -14,7 +14,7 @@ from urllib.request import urlretrieve
 class DataUtil(object):
 
     SAVE_PATH = 'data'
-    TEMP_PATH = 'data\tmp'
+    TEMP_PATH = 'data/tmp'
 
 
     def __init__(self):
@@ -44,18 +44,24 @@ class DataUtil(object):
 
         # Create shelf if not exists
         if not os.path.exists(shelf_path + '.dat'):
-            with shelve.open(shelf_path, 'c') as shelf:
-                shelf['data'] = {
-                'assets' : [],
-                'prices' : [],
-                'images' : [],
-                'urls' : []
-            }
+            self.reset_shelf(shelf_name)
         
         # Read the shelf and return its contents
         with shelve.open(shelf_path, 'r') as shelf:
             data = shelf['data']
         return data
+
+
+    def reset_shelf(self, shelf_name):
+        """Restores a shelf to its default state"""
+        shelf_path = os.path.join(self.full_dir, shelf_name)
+        with shelve.open(shelf_path, 'n') as shelf:
+            shelf['data'] = {
+                'assets' : [],
+                'prices' : [],
+                'images' : [],
+                'urls'   : []
+            }
 
 
 
@@ -81,22 +87,25 @@ class DataUtil(object):
         return result
 
 
-    def deserialize_image(self, data):
-        """Restores a PIL image from a serializable object"""
+    def deserialize_image(self, data, give_file_name):
+        """Restores a PIL image from a serialized obj and returns the path"""
         # Generate a random 8-character name
-        random_name = 'img_'
-        random_name += ''.join(
-            random.choice(
-                string.ascii_uppercase + string.digits
-            ) for _ in range(8)
-        )
-        random_name += '.png'
-
-        print (random_name)
-        file_path = os.path.join(self.temp_dir, random_name)
+        # name = "img_" + self.generate_random_name() + ".png"
+        name = give_file_name + ".png"
+        file_path = os.path.join(self.temp_dir, name)
         img = Image.frombytes(data['mode'], data['size'], data['pixels'])
         img.save(file_path)
         return file_path
+
+
+    def generate_random_string(self, length):
+        result = ''
+        result += ''.join(
+            random.choice(
+                string.ascii_upercase + string.digits
+            ) for _ in range(8)
+        )
+        return result
         
 
     def clear_tmp_folder(self):

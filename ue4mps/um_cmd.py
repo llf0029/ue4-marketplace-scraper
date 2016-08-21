@@ -35,12 +35,12 @@ class UMCmd(cmd.Cmd):
         """Displays the image of the chosen asset:  VIEW_ASSET_IMAGE 4"""
         self.controller.display_asset_image(arg)
 
-    def do_results(self, arg):
-        """Set the number of results to display:    RESULTS 10"""
-        self.controller.set_num_of_results(arg)
+    def do_search_results(self, arg):
+        """Set the number of results to display:    SEARCH_RESULTS 10"""
+        self.controller.set_search_results(arg)
 
     def do_analyse_results(self, arg):
-        """Compares the prices of the last query's assets"""
+        """Compares the prices of the last query's assets (recommended 60 assets or fewer)"""
         self.controller.analyse_results()
 
     def do_save(self, arg):
@@ -58,6 +58,10 @@ class UMCmd(cmd.Cmd):
     def do_wishlist_view(self, arg):
         """Displays all items in the wishlist"""
         self.controller.wishlist_view()
+
+    def do_wishlist_clear(self, arg):
+        """Clears all items from the wishlist"""
+        self.controller.wishlist_clear()
 
 
     # -------- Misc Commands --------

@@ -21,7 +21,7 @@ class Controller(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def set_num_of_results(self, args):
+    def set_search_results(self, args):
         pass
 
     @abstractmethod
@@ -38,4 +38,8 @@ class Controller(metaclass=ABCMeta):
 
     @abstractmethod
     def wishlist_view(self, args):
+        pass
+
+    @abstractmethod
+    def wishlist_clear(self, args):
         pass

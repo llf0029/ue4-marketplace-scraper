@@ -1,6 +1,7 @@
 # Imports
 import view
 
+import sys
 import os
 from PIL import Image
 from urllib.request import urlretrieve
@@ -13,28 +14,35 @@ class UMView(view.View):
 
 
     def display(self, message):
-        print (message)
+        print (message.encode('ascii', 'replace').decode())
+        # print(message.encode('utf8').decode(sys.stdout.encoding))
 
 
     def error(self, message):
-        print (message)
+        print (message.encode('ascii', 'replace').decode())
+        # print (message)
 
 
     def display_items_formatted(self, dict, max_num_of_assets):
         num_of_assets = len(dict['assets'])
 
         if num_of_assets > 0:
-            print ('Displaying the first {} assets (max {}):\n'\
+            self.display('Displaying the first {} assets (max {}):\n'\
                 .format(num_of_assets, max_num_of_assets))
             for i in range(num_of_assets):
+                # Display asset name and number
                 num = ('({})'.format(i + 1))
-                print ('{:^6s}{}'.format(num, dict['assets'][i]))
-                print ('      Price: ', end='')
-                if dict['prices'][i] == 0:
-                    print ('FREE')
+                self.display('{:^6s}{}'.format(num, dict['assets'][i]))
+
+                # Display asset price
+                price = dict['prices'][i]
+                if price == 0:
+                    self.display('      Price: FREE')
                 else:
-                    print ('${:.2f}'.format(dict['prices'][i]))
-                print ('      Link:  {}\n'.format(dict['urls'][i]))
+                    self.display('      Price: ${:.2f}'.format(price))
+
+                # Display asset URL
+                self.display('      Link:  {}\n'.format(dict['urls'][i]))
         else:
             self.error('There were no assets found')
 
