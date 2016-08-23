@@ -1,6 +1,7 @@
 # Imports
 import cmd
 
+
 # Class definition
 class UMCmd(cmd.Cmd):
     intro = 'Welcome to the Unreal Engine 4 Marketplace scraper app.\n' + \
@@ -8,19 +9,18 @@ class UMCmd(cmd.Cmd):
     prompt = 'UE4 Marketplace>'
 
     categories = [
-        'recent', '2d', 'animations', 'archvis', 'blueprints', 'characters', 
+        'recent', '2d', 'animations', 'archvis', 'blueprints', 'characters',
         'codeplugins', 'communitysamples', 'environments', 'fx', 'materials',
         'music', 'onsale', 'props', 'showcasedemos', 'soundfx', 'textures',
         'weapons'
     ]
-    
+
     def __init__(self, controller):
         self.controller = controller    # Set controller
         cmd.Cmd.__init__(self)          # Run main init method
 
     def start(self):
         self.cmdloop()
-
 
     # -------- App Commands --------
     def do_search(self, arg):
@@ -40,7 +40,7 @@ class UMCmd(cmd.Cmd):
         self.controller.set_search_results(arg)
 
     def do_analyse_results(self, arg):
-        """Compares the prices of the last query's assets (recommended 60 assets or fewer)"""
+        """Compares the prices of the last query's assets (max 60)"""
         self.controller.analyse_results()
 
     def do_save(self, arg):
@@ -63,7 +63,6 @@ class UMCmd(cmd.Cmd):
         """Clears all items from the wishlist"""
         self.controller.wishlist_clear()
 
-
     # -------- Misc Commands --------
     def do_exit(self, arg):
         """Exit the Unreal Engine 4 Marketplace scraper app"""
@@ -81,21 +80,3 @@ class UMCmd(cmd.Cmd):
         print ('Possible categories:')
         for cat in self.categories:
             print ('  - {}'.format(cat))
-
-
-# END OF CLASS
-
-
-
-if __name__ == '__main__':
-    import um_view
-    import um_controller
-    import data_util
-    import analysis_util
-
-    v = um_view.UMView()
-    d = data_util.DataUtil()
-    a = analysis_util.AnalysisUtil()
-    c = um_controller.UMController(v, d, a)
-    console = UMCmd(c)
-    console.start()

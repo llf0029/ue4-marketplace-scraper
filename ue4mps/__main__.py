@@ -14,17 +14,20 @@ def main(args):
     d = data_util.DataUtil()
     a = analysis_util.AnalysisUtil()
     c = um_controller.UMController(v, d, a)
-    
+
     if not args == []:
         try:
-            opts, args = getopt.getopt(args, "hs:c:", ["help", "search=", "category="])
+            opts, args = getopt.getopt(
+                args, "hs:c:",
+                ["help", "search=", "category="]
+            )
         except getopt.GetoptError:
             usage()
             sys.exit(2)
 
         # Handle args
         for opt, arg in opts:
-            if  opt in ("-h", "--help"):
+            if opt in ("-h", "--help"):
                 usage()
                 sys.exit()
             elif opt in ("-s", "--search"):
@@ -37,7 +40,7 @@ def main(args):
         cmd = um_cmd.UMCmd(c)
         cmd.start()
 
-    
+
 def usage():
     """Displays usage help documentation"""
     print ('Usage: {} [-h] [-s QUERY | -c CATEGORY]'.format(sys.argv[0]))
@@ -48,6 +51,5 @@ def usage():
     print ("\nOr run __main__.py without arguments to enter interactive mode.")
 
 
-    
 if __name__ == '__main__':
     main(sys.argv[1:])

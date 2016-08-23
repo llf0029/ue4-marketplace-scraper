@@ -1,6 +1,7 @@
 # Imports
 from abc import ABCMeta, abstractmethod
 
+
 # Abstract base class
 class View(metaclass=ABCMeta):
 

@@ -8,27 +8,21 @@ from urllib.request import urlretrieve
 from webbrowser import open
 
 
-
 # Class definition
 class UMView(view.View):
 
-
     def display(self, message):
         print (message.encode('ascii', 'replace').decode())
-        # print(message.encode('utf8').decode(sys.stdout.encoding))
-
 
     def error(self, message):
         print (message.encode('ascii', 'replace').decode())
-        # print (message)
-
 
     def display_items_formatted(self, dict, max_num_of_assets):
         num_of_assets = len(dict['assets'])
 
         if num_of_assets > 0:
-            self.display('Displaying the first {} assets (max {}):\n'\
-                .format(num_of_assets, max_num_of_assets))
+            self.display('Displaying the first {} assets (max {}):\n'
+                         .format(num_of_assets, max_num_of_assets))
             for i in range(num_of_assets):
                 # Display asset name and number
                 num = ('({})'.format(i + 1))
@@ -46,13 +40,9 @@ class UMView(view.View):
         else:
             self.error('There were no assets found')
 
-
     def display_image(self, file_path):
         """Displays a file saved on the local machine"""
         if os.path.exists(file_path):
             open('file://' + file_path)
         else:
             self.error('The image at "{}" was not found'.format(file_path))
-
-
-# END OF CLASS
