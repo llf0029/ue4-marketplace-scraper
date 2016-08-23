@@ -169,7 +169,11 @@ class UMController(controller.Controller):
 
     def set_search_results(self, new_value):
         try:
-            self.search_results = int(new_value)
+            intval = int(new_value)
+            if intval > 0:
+                self.search_results = intval
+            else:
+                raise ValueError
         except ValueError:
             self.view.error('The value must be a whole number:  RESULTS 10')
 
