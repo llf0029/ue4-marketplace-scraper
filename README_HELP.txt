@@ -10,6 +10,11 @@
 |               This document will outline the application usage.             |
 #=============================================================================#
 
+#=============================== REQUIREMENTS ================================#
+Execute the following command in Windows Command Prompt to install all required
+dependences: 
+    pip install -r requirements.txt
+
 #============================== QUICK RUN MODE ===============================#
 To perform a quick query, execute the file "__main__.py" in the Windows Command
 Prompt, along with arguments as described below.
