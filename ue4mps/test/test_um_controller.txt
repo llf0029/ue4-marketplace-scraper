@@ -1,0 +1,41 @@
+Doctests for um_controller.py
+Part of the Unreal Engine 4 Marketplace Scraper app (ue4mps). 
+
+Run this file by calling the following line from Windows Cmd:
+    python -m doctest test_um_controller.txt
+
+Or run the file with the following line for more detailed info:
+    python -m doctest -v test_um_controller.txt
+
+
+
+>>> import doctest
+
+>>> import sys
+>>> import os
+>>> sys.path.append('C:/Users/Lyndon/Documents/School (2016)/PR301/Assignment 1/ue4mps')
+
+>>> import um_controller
+>>> import um_view
+>>> import data_util
+>>> import analysis_util
+
+>>> v = um_view.UMView()
+>>> d = data_util.DataUtil()
+>>> a = analysis_util.AnalysisUtil()
+
+>>> ctrl = um_controller.UMController(v, d, a)
+
+>>> ctrl.wishlist_add(0)
+You must run a query first
+
+>>> ctrl.search("fire") #doctest:+ELLIPSIS
+Displaying ...
+
+>>> ctrl.wishlist_add('a')
+Value must be a whole number: WISHLIST_ADD 4
+
+>>> ctrl.wishlist_add(100)
+Value must be within the previous search results
+
+>>> ctrl.wishlist_add(1)
